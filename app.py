@@ -19,10 +19,10 @@ def push_to_redis():
 	try:
 		redis_db = create_connection()
 		redis_db.flushall()
-		print ("reading file from local.")
+		#print ("reading file from local.")
 		df = pd.read_csv(filename+'.CSV')
-		print ("file readed from local.")
-		print ("top 10 rows.",df.head(10))
+		#print ("file readed from local.")
+		#print ("top 10 rows.",df.head(10))
 		for row in df.itertuples(index=True, name='Pandas'):
 		#    print(getattr(row, "SC_CODE"), getattr(row, "SC_NAME"),getattr(row, "OPEN"),getattr(row, "HIGH"),getattr(row, "LOW"),getattr(row, "CLOSE"))
 			SC_NAME = str(getattr(row, "SC_NAME")).strip()
@@ -37,26 +37,31 @@ def push_to_redis():
 def fetchCSV():
 	global filename
 	filename = 'EQ'+str(datetime.date.today().strftime('%d%m%y'))
-	try:
-		url = "https://www.bseindia.com/download/BhavCopy/Equity/"+filename+"_CSV.ZIP"
-		print(url)
-		response = requests.get(url)
-		print(response.status_code)
-		if(response.status_code==200):
-			z = zipfile.ZipFile(io.BytesIO(response.content))
-			z.extractall("/Users/ayushpalak/Downloads/zerodha")
-			print("file downloaded and unzipped.")
-			push_to_redis()
-		else:
-			filename = 'EQ'+str((datetime.date.today()-datetime.timedelta(1)).strftime('%d%m%y'))
-			push_to_redis()
-			print("Showing yesterdays data.")
-	except exception as e:
-		print (e)
+	if(not os.path.exists(filename+'.CSV')):
+		try:
+			url = "https://www.bseindia.com/download/BhavCopy/Equity/"+filename+"_CSV.ZIP"
+			print(url)
+			response = requests.get(url)
+			print(response.status_code)
+			if(response.status_code==200):
+				z = zipfile.ZipFile(io.BytesIO(response.content))
+				z.extractall("/Users/ayushpalak/Downloads/zerodha")
+				print("file downloaded and unzipped.")
+				push_to_redis()
+			else:
+				prev_filename = 'EQ'+str((datetime.date.today()-datetime.timedelta(1)).strftime('%d%m%y'))
+				if(os.path.exists(prev_filename+'.CSV')):
+				# push_to_redis()
+					filename = prev_filename
+					push_to_redis()
+					print("Showing yesterdays data.")
+		except exception as e:
+			print (e)
 
 def get_stock_data(stock_name):
 	result = []
 	redis_db = create_connection()
+	print("getting data from redis.")
 	while(redis_db.llen(stock_name)!=0):
 		result.append((redis_db.lpop(stock_name).decode("utf-8")))
 	return result
