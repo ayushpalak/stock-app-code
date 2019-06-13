@@ -50,7 +50,7 @@ def fetchCSV():
 				if(os.path.exists(prev_filename+'.CSV')):
 				# push_to_redis()
 					filename = prev_filename
-					#push_to_redis()
+					push_to_redis()
 					print("Showing yesterdays data.")
 		except exception as e:
 			print (e)
