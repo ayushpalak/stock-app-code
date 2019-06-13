@@ -8,8 +8,8 @@ filename = None
 
 def create_connection():
 	try:
-		#redis_db = redis.StrictRedis(host="localhost", port=6379, db=0)
-		redis_db = redis.from_url(os.environ.get("REDIS_URL"))  # for connection in heroku
+		redis_db = redis.StrictRedis(host="localhost", port=6379, db=0)
+		#redis_db = redis.from_url(os.environ.get("REDIS_URL"))  # for connection in heroku
 		return redis_db
 	except Exception as e:
 		print (e)
@@ -19,10 +19,7 @@ def push_to_redis():
 	try:
 		redis_db = create_connection()
 		redis_db.flushall()
-		#print ("reading file from local.")
 		df = pd.read_csv(filename+'.CSV')
-		#print ("file readed from local.")
-		#print ("top 10 rows.",df.head(10))
 		for row in df.itertuples(index=True, name='Pandas'):
 		#    print(getattr(row, "SC_CODE"), getattr(row, "SC_NAME"),getattr(row, "OPEN"),getattr(row, "HIGH"),getattr(row, "LOW"),getattr(row, "CLOSE"))
 			SC_NAME = str(getattr(row, "SC_NAME")).strip()
@@ -53,7 +50,7 @@ def fetchCSV():
 				if(os.path.exists(prev_filename+'.CSV')):
 				# push_to_redis()
 					filename = prev_filename
-					push_to_redis()
+					#push_to_redis()
 					print("Showing yesterdays data.")
 		except exception as e:
 			print (e)
@@ -62,9 +59,13 @@ def get_stock_data(stock_name):
 	result = []
 	redis_db = create_connection()
 	print("getting data from redis.")
-	while(redis_db.llen(stock_name)!=0):
-		result.append((redis_db.lpop(stock_name).decode("utf-8")))
-	return result
+	# while(redis_db.llen(stock_name)!=0):
+	# 	result.append((redis_db.lpop(stock_name).decode("utf-8")))
+	l  = redis_db.lrange(stock_name.upper(),0,-1)
+	#l.reverse()
+	l = [i.decode("utf-8") for i in l]
+	print (l)
+	return l
 
 class parser(object):
 	
