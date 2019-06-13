@@ -44,7 +44,6 @@ ipykernel==4.8.2
 ipython==6.4.0
 ipython-genutils==0.2.0
 ipywidgets==7.2.1
-iroha==0.0.24
 itsdangerous==0.24
 jaraco.functools==2.0
 jedi==0.12.1
