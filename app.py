@@ -19,7 +19,10 @@ def push_to_redis():
 	try:
 		redis_db = create_connection()
 		redis_db.flushall()
+		print ("reading file from local.")
 		df = pd.read_csv(filename+'.CSV')
+		print ("file readed from local.")
+		print ("top 10 rows.",df.head(10))
 		for row in df.itertuples(index=True, name='Pandas'):
 		#    print(getattr(row, "SC_CODE"), getattr(row, "SC_NAME"),getattr(row, "OPEN"),getattr(row, "HIGH"),getattr(row, "LOW"),getattr(row, "CLOSE"))
 			SC_NAME = str(getattr(row, "SC_NAME")).strip()
