@@ -6,18 +6,24 @@
 
 #form-group-id{
 	margin-top: 1%;
-    margin-left: 4%;
-    margin-right: 4%;
+    margin-left: 0%;
+    margin-right: 0%;
 	
 }
 
 @media (max-width:768px){
       #form-group-id {
-        width: 100%;
-    	margin-left: 2%;
+        width: 98%;
+    margin-left: 0%;
+    margin-right: 14%;
       }
     }
 
+@media (max-width: 767px){
+.table-responsive {
+    width: 100%;
+    }
+}
 .my_thead{
 	    background: #61616145;
     
@@ -25,3 +31,18 @@
     
     font-size: x-large;
 }
+
+#stock-line{
+	width: 15%;
+    height: 0px;
+    border: 1.5px solid #00E4AE;
+    margin-top: -5%;
+}
+
+@media (max-width:725px){
+      #stock-line {
+        width: 35%;
+    margin-left: 0%;
+    margin-right: 14%;
+      }
+    }
