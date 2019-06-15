@@ -20,7 +20,7 @@ $(document).ready(function() { /* code here */
 					var settings = {
 			  "async": true,
 			  "crossDomain": true,
-			  "url": "http://127.0.0.1:5000/get_top_10",
+			  "url": "/get_top_10",
 			  "method": "GET",
 			  "headers": {
 			    "content-type": "application/json",
@@ -61,7 +61,7 @@ $(document).ready(function() { /* code here */
 					var settings = {
 			  "async": true,
 			  "crossDomain": true,
-			  "url": "http://127.0.0.1:5000/",
+			  "url": "/",
 			  "method": "POST",
 			  "headers": {
 			    "content-type": "application/json",
