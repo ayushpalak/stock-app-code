@@ -1,0 +1,27 @@
+@media (max-width:720px){
+      .img-responsive {
+        width:100%;
+      }
+    }
+
+#form-group-id{
+	margin-top: 1%;
+    margin-left: 4%;
+    margin-right: 4%;
+	
+}
+
+@media (max-width:768px){
+      #form-group-id {
+        width: 100%;
+    	margin-left: 2%;
+      }
+    }
+
+.my_thead{
+	    background: #61616145;
+    
+    font: bold;
+    
+    font-size: x-large;
+}

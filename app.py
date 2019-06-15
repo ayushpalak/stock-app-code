@@ -1,24 +1,31 @@
+__requires__ = [
+	'cherrypy_cors',
+]
+
 import requests, zipfile, io, os
 import redis
 import datetime
 import pandas as pd
-import cherrypy
+import cherrypy,cherrypy_cors
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates'))
 
 filename = None
 
 def create_connection():
 	try:
-		#redis_db = redis.StrictRedis(host="localhost", port=6379, db=0)
-		redis_db = redis.from_url(os.environ.get("REDIS_URL"))  # for connection in heroku
+		redis_db = redis.StrictRedis(host="localhost", port=6379, db=0)
+		#redis_db = redis.from_url(os.environ.get("REDIS_URL"))  # for connection in heroku
 		return redis_db
 	except Exception as e:
 		print (e)
 
-def push_to_redis():
+def push_to_redis(filename):
 	# create a connection to the localhost Redis server instance, by
 	try:
 		redis_db = create_connection()
 		redis_db.flushall()
+		redis_db.set("filename",filename)
 		df = pd.read_csv(filename+'.CSV')
 		for row in df.itertuples(index=True, name='Pandas'):
 		#    print(getattr(row, "SC_CODE"), getattr(row, "SC_NAME"),getattr(row, "OPEN"),getattr(row, "HIGH"),getattr(row, "LOW"),getattr(row, "CLOSE"))
@@ -42,20 +49,30 @@ def fetchCSV():
 			print(response.status_code)
 			if(response.status_code==200):
 				z = zipfile.ZipFile(io.BytesIO(response.content))
-				z.extractall("/Users/ayushpalak/Downloads/zerodha")
+				# z.extractall("/Users/ayushpalak/Downloads/zerodha")
+				z.extractall()
 				print("file downloaded and unzipped.")
-				push_to_redis()
+				push_to_redis(filename)
 			else:
 				prev_filename = 'EQ'+str((datetime.date.today()-datetime.timedelta(1)).strftime('%d%m%y'))
-				if(os.path.exists(prev_filename+'.CSV')):
-				# push_to_redis()
+				redis_db = create_connection()
+				_filename = redis_db.get("filename")
+				if _filename and (_filename.decode() == prev_filename):
 					filename = prev_filename
-					#push_to_redis()
-					print("Showing yesterdays data.")
-		except exception as e:
-			print (e)
+					print("previous day data already in redis.")
+				else:
+					if(os.path.exists(prev_filename+'.CSV')):
+						filename = prev_filename
+						print("previous day data not in redis. Pushing it from yesterdays downloaded file.")
+						push_to_redis(filename)
+						print("Showing yesterdays data.")
+					else:
+						print("previous day file not available. showing very old data.")
+		except Exception as e:
+			print ("catching fetchCSV()",e)
 
 def get_stock_data(stock_name):
+	stock_name = stock_name.strip()
 	result = []
 	redis_db = create_connection()
 	print("getting data from redis.")
@@ -69,7 +86,14 @@ def get_stock_data(stock_name):
 
 class parser(object):
 	
-	
+	def CORS():
+		cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
+
+	@cherrypy.expose
+	def home(self):
+		tmpl = env.get_template('index.html')
+		return tmpl.render()
+
 	@cherrypy.expose
 	@cherrypy.tools.json_out()
 	@cherrypy.tools.json_in()
@@ -80,8 +104,38 @@ class parser(object):
 		result = get_stock_data(stock_name)
 		return {"filename":filename,"result":list(result)}
 
+	@cherrypy.expose
+	@cherrypy.tools.json_out()
+	@cherrypy.tools.json_in()
+	def get_top_10(self):
+		result = []
+		fetchCSV()
+		redis_db = create_connection()
+		result = {}
+		l = redis_db.scan(10)
+		for i in l[1]:
+			r = redis_db.lrange(i,0,-1)
+			r = [item.decode() for item in r]
+			result[i.decode()] = r
+		return result
+
 
 if __name__ == '__main__':
+	cherrypy_cors.install()
+	conf = {
+		'/': {
+			'tools.sessions.on': True,
+			'tools.staticdir.root': os.path.abspath(os.getcwd()),
+			'tools.response_headers.on': True,
+			'cors.expose.on': True,
+			
+			
+		},
+		'/static': {
+			'tools.staticdir.on': True,
+			'tools.staticdir.dir': './public'
+		}
+	}
 	cherrypy.config.update({'server.socket_host': '0.0.0.0',})
 	cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', '5000')),})
-	cherrypy.quickstart(parser())
+	cherrypy.quickstart(parser(),'/',conf)
