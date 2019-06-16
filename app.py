@@ -114,7 +114,7 @@ class parser(object):
 		keys = redis_db.keys()
 		keys = [i.decode() for i in keys]
 		result = {}
-		l = redis_db.scan(10)
+		l = redis_db.scan(9)
 		for i in l[1]:
 			r = redis_db.lrange(i,0,-1)
 			r = [item.decode() for item in r]

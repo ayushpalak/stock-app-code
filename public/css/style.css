@@ -8,6 +8,7 @@
 	margin-top: 1%;
     margin-left: 0%;
     margin-right: 0%;
+    margin-bottom: 1%;
 	
 }
 
@@ -29,8 +30,9 @@
     
     font: bold;
     
-    font-size: x-large;
+    font-size: inherit;
 }
+
 
 #stock-line{
 	width: 15%;
@@ -44,5 +46,6 @@
         width: 35%;
     margin-left: 0%;
     margin-right: 14%;
+    margin-bottom: 1%;
       }
     }
