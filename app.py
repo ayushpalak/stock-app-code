@@ -48,7 +48,8 @@ def fetchCSV():
 			print(response.status_code)
 			if(response.status_code==200):
 				z = zipfile.ZipFile(io.BytesIO(response.content))
-				z.extractall("/Users/ayushpalak/Downloads/zerodha")
+				#z.extractall("/Users/ayushpalak/Downloads/zerodha")
+				z.extractall()
 				print("file downloaded and unzipped.")
 				push_to_redis(filename)
 			else:
