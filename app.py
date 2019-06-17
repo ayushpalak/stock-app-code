@@ -28,7 +28,6 @@ def push_to_redis(filename):
 		redis_db.set("filename",filename)
 		df = pd.read_csv(filename+'.CSV')
 		for row in df.itertuples(index=True, name='Pandas'):
-		#    print(getattr(row, "SC_CODE"), getattr(row, "SC_NAME"),getattr(row, "OPEN"),getattr(row, "HIGH"),getattr(row, "LOW"),getattr(row, "CLOSE"))
 			SC_NAME = str(getattr(row, "SC_NAME")).strip()
 			redis_db.lpush(str(getattr(row, "SC_NAME")).strip(),getattr(row, "SC_CODE"))
 			redis_db.lpush(str(getattr(row, "SC_NAME")).strip(),getattr(row, "OPEN"))
@@ -49,8 +48,7 @@ def fetchCSV():
 			print(response.status_code)
 			if(response.status_code==200):
 				z = zipfile.ZipFile(io.BytesIO(response.content))
-				# z.extractall("/Users/ayushpalak/Downloads/zerodha")
-				z.extractall()
+				z.extractall("/Users/ayushpalak/Downloads/zerodha")
 				print("file downloaded and unzipped.")
 				push_to_redis(filename)
 			else:
@@ -76,10 +74,7 @@ def get_stock_data(stock_name):
 	result = []
 	redis_db = create_connection()
 	print("getting data from redis.")
-	# while(redis_db.llen(stock_name)!=0):
-	# 	result.append((redis_db.lpop(stock_name).decode("utf-8")))
 	l  = redis_db.lrange(stock_name.upper(),0,-1)
-	#l.reverse()
 	l = [i.decode("utf-8") for i in l]
 	print (l)
 	return l

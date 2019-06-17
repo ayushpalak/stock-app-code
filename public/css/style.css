@@ -25,6 +25,7 @@
     width: 100%;
     }
 }
+
 .my_thead{
 	    background: #61616145;
     
@@ -32,7 +33,6 @@
     
     font-size: inherit;
 }
-
 
 #stock-line{
 	width: 15%;

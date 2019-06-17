@@ -90,14 +90,7 @@
 						table_row_data = table_row_data + "<td>"+response["result"][i]+"</td>";
 					}
 					table_row_data = table_row_data + '</tr>';
-					// $('#top-ten-table').prepend(table_row_data);
-					//$('#top-ten-table > tbody:last-child').append(table_row_data);
-					
 
-
-					// $('#top-ten-table tr:nth-child(1)').replaceWith(table_row_data);
-					// $('.my_thead').html('<tr><th scope="col">Name</th><th scope="col">Close</th><th scope="col">Low</th><th scope="col">High</th><th scope="col">Open</th><th scope="col">SC Code</th></tr>');
-					
 					if(flag == 1){
 						
 						$('#top-ten-table tbody').prepend(table_row_data);
