@@ -74,7 +74,7 @@ def get_stock_data(stock_name):
 	result = []
 	redis_db = create_connection()
 	print("getting data from redis.")
-	l  = redis_db.lrange(stock_name.upper(),0,-1)
+	l  = redis_db.lrange(stock_name.upper(),0,4)
 	l = [i.decode("utf-8") for i in l]
 	print (l)
 	return l
