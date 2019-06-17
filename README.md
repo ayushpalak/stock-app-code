@@ -5,7 +5,7 @@ This webapp is meant to download latest bhav copy data from BSE site and push to
 
 Tech Stack:
 
-Redis CLi 
+Redis CLI 
 Python Cherrypy
 Heroku hosting
 Html
