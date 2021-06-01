@@ -129,7 +129,7 @@ traitlets==4.3.2
 twilio==6.18.0
 unicode==2.7
 Unidecode==1.0.23
-urllib3==1.23
+urllib3==1.26.5
 virtualenv==16.4.1
 wasabi==0.2.1
 wcwidth==0.1.7
