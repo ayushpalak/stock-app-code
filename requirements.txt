@@ -92,7 +92,7 @@ pycryptodome==3.6.4
 Pygments==2.2.0
 PyJWT==1.6.4
 pyparsing==2.3.1
-PyPDF2==1.26.0
+PyPDF2==1.27.5
 PySocks==1.6.8
 pytesseract==0.2.6
 python-dateutil==2.7.3
